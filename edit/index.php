@@ -52,6 +52,14 @@ if (isset($_POST["addSkill"])) {
         die("$con->error");
     }
 }
+if (isset($_POST['deleSkill'])) {
+    $id = $_POST["id"];
+    $sql = "DELETE FROM skills WHERE id = $id";
+    $result = $con->query($sql);
+    if ($result != true) {
+        die("error");
+    }
+}
 if (isset($_POST["expirences"])) {
     $name = $_POST["name"];
     $value = $_POST["position"];
@@ -69,6 +77,14 @@ if (isset($_POST["addExp"])) {
     $result1 = $con->query($sql);
     if ($result1 == false) {
         die("$con->error");
+    }
+}
+if (isset($_POST['deleExp'])) {
+    $id = $_POST["id"];
+    $sql = "DELETE FROM expirences WHERE id = $id";
+    $result = $con->query($sql);
+    if ($result != true) {
+        die("error");
     }
 }
 if (isset($_POST["projects"])) {
@@ -97,6 +113,21 @@ if (isset($_POST["AddProject"])) {
         die("$con->error");
     }
 }
+if (isset($_POST["deleProject"])) {
+    $id = $_POST['id'];
+    $sql = "SELECT image FROM projects WHERE id = $id";
+    $result = $con->query($sql);
+    $image = $result->fetch_assoc();
+    if (unlink("../Images/projects/" . $image['image'])) {
+        $sql = "DELETE FROM projects WHERE id = $id";
+        $result = $con->query($sql);
+        if ($result != true) {
+            die("error");
+        }
+    } else {
+        die("Error");
+    }
+}
 if (isset($_POST["testimonial"])) {
     $name = $_POST["name"];
     $link = $_POST["link"];
@@ -121,6 +152,23 @@ if (isset($_POST["AddTestimonial"])) {
     $result1 = $con->query($sql);
     if ($result1 == false) {
         die("$con->error");
+    }
+}
+if (isset($_POST['deleTestimonial'])) {
+
+    $id = $_POST["id"];
+    include('../db.php');
+    $sql = "SELECT image FROM testimonials WHERE id = $id";
+    $result = $con->query($sql);
+    $image = $result->fetch_assoc();
+    if (unlink("../Images/testimonials/" . $image['image'])) {
+        $sql = "DELETE FROM testimonials WHERE id = $id";
+        $result = $con->query($sql);
+        if ($result != true) {
+            die("error");
+        }
+    } else {
+        die("Error");
     }
 }
 ?>
@@ -207,7 +255,7 @@ if (isset($_POST["AddTestimonial"])) {
                                 </td>
                                 <td><input type='number' name='value' value='$value' style='width:100%'></td>
                                 <td><button type='submit' style='padding:3px' name='skills' class='btn btn-primary'><i class='fas fa-save'></i>
-                                </button><button onclick='dele($id)' class='btn btn-secondary' type='button' style='padding:3px;margin-left:5px'><i class='fas fa-minus-circle'></i>
+                                </button><button name='deleSkill' class='btn btn-secondary' type='submit' style='padding:3px;margin-left:5px'><i class='fas fa-minus-circle'></i>
                                 </button>'</td>
                         </form></tr>";
                         }
@@ -231,22 +279,6 @@ if (isset($_POST["AddTestimonial"])) {
                         display: none;
                     }
                 </style>
-                <script>
-                    function dele(filename) {
-                        var r = confirm("Are you sure you want to delete this Skill from site?")
-                        if (r == true) {
-                            var xhttp = new XMLHttpRequest();
-                            xhttp.open("GET", "deleskill.php?q=" + filename, true);
-                            xhttp.send();
-                            xhttp.onreadystatechange = function() {
-                                if (this.readyState == 4 && this.status == 200) {
-                                    alert(this.responseText);
-                                    window.location.reload();
-                                }
-                            };
-                        }
-                    }
-                </script>
             </div>
             <div class="col-sm-5">
                 <form action="" method="post">
@@ -364,7 +396,7 @@ if (isset($_POST["AddTestimonial"])) {
                                 </td>
                                 <td><input type='text' name='position' value='$position' style='width:100%'></td>
                                 <td><button type='submit' style='padding:3px' name='expirences' class='btn btn-primary'><i class='fas fa-save'></i>
-                                </button><button onclick='deleExp($id)' class='btn btn-secondary' type='button' style='padding:3px;margin-left:5px'><i class='fas fa-minus-circle'></i>
+                                </button><button name='deleExp' class='btn btn-secondary' type='submit' style='padding:3px;margin-left:5px'><i class='fas fa-minus-circle'></i>
                                 </button>'</td>
                         </form></tr>";
                         }
@@ -432,29 +464,13 @@ if (isset($_POST["AddTestimonial"])) {
                                 <td><textarea type='text' name='details' style='width:100%;height:100px'>$details</textarea></td>
                                 <td><img src='../images/projects/$image' style='width:100%'></td>
                                 <td><button type='submit' style='padding:3px' name='projects' class='btn btn-primary'><i class='fas fa-save'></i>
-                                </button><button onclick='deleProject($id)' class='btn btn-secondary' type='button' style='padding:3px;margin-left:5px'><i class='fas fa-minus-circle'></i>
+                                </button><button name='deleProject' class='btn btn-secondary' type='submit' style='padding:3px;margin-left:5px'><i class='fas fa-minus-circle'></i>
                                 </button>'</td>
                         </form></tr>";
                         }
                     }
                     ?>
                 </table>
-                <script>
-                    function deleProject(filename) {
-                        var r = confirm("Are you sure you want to delete this Project Record from site?")
-                        if (r == true) {
-                            var xhttp = new XMLHttpRequest();
-                            xhttp.open("GET", "deleProject.php?q=" + filename, true);
-                            xhttp.send();
-                            xhttp.onreadystatechange = function() {
-                                if (this.readyState == 4 && this.status == 200) {
-                                    alert(this.responseText);
-                                    window.location.reload();
-                                }
-                            };
-                        }
-                    }
-                </script>
             </div>
             <div class="col-sm-6">
                 <h3 style="color: whitesmoke;">Testimonials</h3>
@@ -497,29 +513,13 @@ if (isset($_POST["AddTestimonial"])) {
                                 <td><textarea type='text' name='details' style='width:100%;height:100px'>$details</textarea></td>
                                 <td><img src='../images/testimonials/$image' style='width:100%'></td>
                                 <td><button type='submit' style='padding:3px' name='testimonial' class='btn btn-primary'><i class='fas fa-save'></i>
-                                </button><button onclick='deleTestimonial($id)' class='btn btn-secondary' type='button' style='padding:3px;margin-left:5px'><i class='fas fa-minus-circle'></i>
+                                </button><button name='deleTestimonial' class='btn btn-secondary' type='submit' style='padding:3px;margin-left:5px'><i class='fas fa-minus-circle'></i>
                                 </button>'</td>
                         </form></tr>";
                         }
                     }
                     ?>
                 </table>
-                <script>
-                    function deleTestimonial(filename) {
-                        var r = confirm("Are you sure you want to delete this Project Record from site?")
-                        if (r == true) {
-                            var xhttp = new XMLHttpRequest();
-                            xhttp.open("GET", "deleTestimonial.php?q=" + filename, true);
-                            xhttp.send();
-                            xhttp.onreadystatechange = function() {
-                                if (this.readyState == 4 && this.status == 200) {
-                                    alert(this.responseText);
-                                    window.location.reload();
-                                }
-                            };
-                        }
-                    }
-                </script>
             </div>
         </div>
     </div>
